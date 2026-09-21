@@ -24,6 +24,7 @@ const L = {
         f: "表情&裝飾",
         h: "生日帽",
         s: "儲存",
+        png: "另存PNG",
         start: "開始繪畫",
         back: "上一步",
         next: "下一步",
@@ -52,6 +53,7 @@ const L = {
         f: "Face & Decorations",
         h: "Birthday Hat",
         s: "Save",
+        png: "Save as PNG",
         start: "Start Drawing",
         back: "Back",
         next: "Next",
@@ -80,6 +82,7 @@ const L = {
         f: "表情＆デコレーション",
         h: "誕生日帽",
         s: "保存",
+        png: "PNGを別保存",
         start: "描き始める",
         back: "戻る",
         next: "次へ",
@@ -339,6 +342,7 @@ export default function App() {
         };
         im.src = u;
     };
+    const [saveMenuOpen, setSaveMenuOpen] = useState(false)
     return (
         <main>
             <header>
@@ -529,9 +533,30 @@ export default function App() {
                                 <Icon>download</Icon>
                                 {t.s}
                             </button>
-                            <button onClick={savePng}>
-                                <Icon>image</Icon>PNG
-                            </button>
+
+                            <div className="save-menu">
+                                <button
+                                    className="menu-trigger"
+                                    aria-label="More save options"
+                                    onClick={() => setSaveMenuOpen((v) => !v)}
+                                >
+                                    <Icon>more_vert</Icon>
+                                </button>
+
+                                {saveMenuOpen && (
+                                    <div className="save-dropdown">
+                                        <button
+                                            onClick={() => {
+                                                setSaveMenuOpen(false);
+                                                savePng();
+                                            }}
+                                        >
+                                            <Icon>image</Icon>
+                                            {t.png}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
                     <div className="controls">
