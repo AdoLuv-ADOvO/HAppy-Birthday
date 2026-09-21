@@ -344,6 +344,19 @@ footer {
     justify-content: center;
 }
 
+@media (max-width: 600px) {
+    /* existing mobile styles */
+
+    .hat-buttons {
+        width: 100%;
+        max-width: 195px; /* 4 × 42px buttons + 3 × 9px gaps */
+        display: grid;
+        grid-template-columns: repeat(4, 42px);
+        gap: 9px;
+        justify-content: center;
+    }
+}
+
 .hat-palette button {
     background: #0d0d0d !important;
     display: flex;
