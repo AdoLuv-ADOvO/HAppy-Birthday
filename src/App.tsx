@@ -1,6 +1,7 @@
-import React, { useRef, useState, useCallback } from "react";
+﻿import React, { useRef, useState, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
+
 type P = { x: number; y: number };
 type Color = "#000000" | "#2B7FFF" | "#123A7A";
 type Hat = {
@@ -11,12 +12,14 @@ type Hat = {
     circle: Color;
     body: Color;
 };
+
 const S = 300,
     BRUSH = 7,
     CLOSE = 18,
     TOOTH_EPS = 2.5,
     FACE_EPS = 1,
     EPS = 1;
+
 const L = {
     zh: {
         g: "說明",
@@ -24,7 +27,13 @@ const L = {
         f: "表情&裝飾",
         h: "生日帽",
         s: "儲存",
-        png: "另存PNG",
+        share: "分享",
+        png: "PNG",
+        svg: "SVG",
+        x: "X",
+        threads: "Threads",
+        instagram: "Instagram",
+        shareNote: "分享到各社群時，請直接發文並附上 PNG 圖片及本網站網址。",
         start: "開始繪畫",
         back: "上一步",
         next: "下一步",
@@ -53,7 +62,13 @@ const L = {
         f: "Face & Decorations",
         h: "Birthday Hat",
         s: "Save",
-        png: "Save as PNG",
+        share: "Share",
+        png: "PNG",
+        svg: "SVG",
+        x: "X",
+        threads: "Threads",
+        instagram: "Instagram",
+        shareNote: "When sharing to any social platform, post directly with the PNG image and this website URL included.",
         start: "Start Drawing",
         back: "Back",
         next: "Next",
@@ -82,7 +97,13 @@ const L = {
         f: "表情＆デコレーション",
         h: "誕生日帽",
         s: "保存",
-        png: "PNGを別保存",
+        share: "共有",
+        png: "PNG",
+        svg: "SVG",
+        x: "X",
+        threads: "Threads",
+        instagram: "Instagram",
+        shareNote: "各SNSに共有する際は、PNG画像と本サイトのURLを添えたまま直接投稿してください。",
         start: "描き始める",
         back: "戻る",
         next: "次へ",
@@ -106,9 +127,11 @@ const L = {
         saved: "作品を保存しました！",
     },
 };
+
 function d(a: P, b: P) {
     return Math.hypot(a.x - b.x, a.y - b.y);
 }
+
 function simp(a: P[], e = EPS): P[] {
     if (a.length < 3) return a.slice();
     let m = 0,
@@ -128,10 +151,11 @@ function simp(a: P[], e = EPS): P[] {
     }
     return m > e
         ? simp(a.slice(0, k + 1), e)
-            .slice(0, -1)
-            .concat(simp(a.slice(k), e))
+              .slice(0, -1)
+              .concat(simp(a.slice(k), e))
         : [A, B];
 }
+
 function path(a: P[], closed = false) {
     if (a.length < 2) return "";
     if (closed) {
@@ -157,9 +181,11 @@ function path(a: P[], closed = false) {
     }
     return o;
 }
+
 function cross(a: P, b: P, c: P) {
     return (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
 }
+
 function intersect(a: P, b: P, c: P, e: P) {
     let x1 = cross(a, b, c),
         x2 = cross(a, b, e),
@@ -170,12 +196,14 @@ function intersect(a: P, b: P, c: P, e: P) {
         ((x3 > 0 && x4 < 0) || (x3 < 0 && x4 > 0))
     );
 }
+
 function firstCross(a: P[]) {
     for (let i = 1; i < a.length - 2; i++)
         for (let j = 0; j < i - 1; j++)
             if (intersect(a[i], a[i + 1], a[j], a[j + 1])) return i;
     return -1;
 }
+
 function area(a: P[]) {
     return (
         a.reduce(
@@ -185,6 +213,7 @@ function area(a: P[]) {
         ) / 2
     );
 }
+
 function offset(a: P[], r: number) {
     let ccw = area(a) > 0;
     return a.map((p, i) => {
@@ -203,9 +232,11 @@ function offset(a: P[], r: number) {
         };
     });
 }
+
 function Icon({ children }: { children: string }) {
     return <span className="material-symbols-outlined">{children}</span>;
 }
+
 export default function App() {
     const [lang, setLang] = useState<"zh" | "en" | "ja">("zh"),
         [step, setStep] = useState(0),
@@ -223,8 +254,10 @@ export default function App() {
             body: "#123A7A",
         }),
         [err, setErr] = useState("");
+
     const svg = useRef<SVGSVGElement>(null),
         t = L[lang];
+
     const point = useCallback((e: React.PointerEvent<SVGSVGElement>) => {
         let r = svg.current!.getBoundingClientRect();
         return {
@@ -232,6 +265,7 @@ export default function App() {
             y: Math.max(0, Math.min(300, ((e.clientY - r.top) * 300) / r.height)),
         };
     }, []);
+
     const down = (e: React.PointerEvent<SVGSVGElement>) => {
         if (step < 1 || step > 2) return;
         e.currentTarget.setPointerCapture(e.pointerId);
@@ -239,6 +273,7 @@ export default function App() {
         setDrawing(true);
         setErr("");
     };
+
     const move = (e: React.PointerEvent<SVGSVGElement>) => {
         if (!drawing) return;
         e.preventDefault();
@@ -247,6 +282,7 @@ export default function App() {
             !a.length || d(a[a.length - 1], p) >= 2.5 ? [...a, p] : a,
         );
     };
+
     const up = () => {
         if (!drawing) return;
         setDrawing(false);
@@ -279,6 +315,7 @@ export default function App() {
             setDraft([]);
         }
     };
+
     const next = () => {
         setErr("");
         if (step === 0) setStep(1);
@@ -290,6 +327,7 @@ export default function App() {
             else setStep(3);
         } else if (step === 3) setStep(4);
     };
+
     const clear = () => {
         setDraft([]);
         setErr("");
@@ -305,44 +343,131 @@ export default function App() {
                 body: "#123A7A",
             });
     };
+
     const moveHat = (x: number, y: number) =>
         setHat((h) => ({
             ...h,
             x: Math.max(15, Math.min(285, h.x + x)),
             y: Math.max(15, Math.min(285, h.y + y)),
         }));
+
     const scaleHat = (v: number) =>
         setHat((h) => ({ ...h, scale: Math.max(0.5, Math.min(1.8, h.scale + v)) }));
+
     const back = () => {
         setErr("");
         setDraft([]);
         setStep(Math.max(0, step - 1));
     };
+
     const markup = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="#000"/><path d="${tooth}" fill="#fff"/>${faces.map((x) => `<path d="${x.d}" fill="none" stroke="${x.c}" stroke-width="${BRUSH}" stroke-linecap="round" stroke-linejoin="round"/>`).join("")}<g transform="translate(${hat.x} ${hat.y}) rotate(${hat.rotation}) scale(${hat.scale})"><path d="M 0 0 L -27.57 66.52 A 72 72 0 0 0 27.57 66.52 Z" fill="${hat.body}"/><circle cx="0" cy="0" r="12" fill="${hat.circle}"/></g></svg>`;
+
     const dl = (b: Blob, n: string) => {
-        let a = document.createElement("a");
-        a.href = URL.createObjectURL(b);
+        const a = document.createElement("a");
+        const href = URL.createObjectURL(b);
+        a.href = href;
         a.download = n;
         a.click();
-        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        setTimeout(() => URL.revokeObjectURL(href), 1000);
     };
+
     const saveSvg = () =>
-        dl(new Blob([markup], { type: "image/svg+xml" }), "happy-birthday.svg");
-    const savePng = () => {
-        let u = URL.createObjectURL(new Blob([markup], { type: "image/svg+xml" })),
-            im = new Image();
-        im.onload = () => {
-            let c = document.createElement("canvas");
-            c.width = c.height = 300;
-            c.getContext("2d")!.drawImage(im, 0, 0, 300, 300);
-            c.toBlob((b) => {
-                if (b) dl(b, "happy-birthday.png");
-                URL.revokeObjectURL(u);
-            }, "image/png");
-        };
-        im.src = u;
+        dl(new Blob([markup], { type: "image/svg+xml;charset=utf-8" }), "happy-birthday.svg");
+
+    const renderPngBlob = async (): Promise<Blob | null> => {
+        const svgBlob = new Blob([markup], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(svgBlob);
+        const exportSize = 1080;
+
+        try {
+            return await new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = exportSize;
+                    canvas.height = exportSize;
+                    const ctx = canvas.getContext("2d");
+                    if (!ctx) {
+                        URL.revokeObjectURL(url);
+                        resolve(null);
+                        return;
+                    }
+                    ctx.fillStyle = "#000000";
+                    ctx.fillRect(0, 0, exportSize, exportSize);
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = "high";
+                    ctx.drawImage(img, 0, 0, exportSize, exportSize);
+                    canvas.toBlob((blob) => {
+                        URL.revokeObjectURL(url);
+                        resolve(blob ?? null);
+                    }, "image/png");
+                };
+                img.onerror = () => {
+                    URL.revokeObjectURL(url);
+                    resolve(null);
+                };
+                img.src = url;
+            });
+        } catch {
+            URL.revokeObjectURL(url);
+            return null;
+        }
     };
-    const [saveMenuOpen, setSaveMenuOpen] = useState(false)
+
+    const savePng = async (): Promise<Blob | null> => {
+        const blob = await renderPngBlob();
+        if (blob) dl(blob, "happy-birthday.png");
+        return blob;
+    };
+
+    const shareUrl = window.location.href || "https://adoluv-adovo.github.io/HAppy-Birthday";
+    const shareText = "HAppy Birthday!\n#HAppyBirthday #歯ッピーバースデー\n\n" + shareUrl;
+
+    const copyShareText = async (text: string) => {
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+            }
+        } catch {
+            // Ignore clipboard failures; the fallback share URL still works.
+        }
+    };
+
+    const shareTo = async (platform: "x" | "threads" | "instagram") => {
+        const pngBlob = await renderPngBlob();
+        const text = shareText;
+        const file = pngBlob ? new File([pngBlob], "happy-birthday.png", { type: "image/png" }) : null;
+        const shareData = file
+            ? {
+                  files: [file],
+                  title: "HAppy Birthday!",
+                  text,
+              }
+            : { text, url: shareUrl };
+
+        if (navigator.share && file && navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share(shareData);
+                return;
+            } catch {
+                // Continue to fallback composer.
+            }
+        }
+
+        const url =
+            platform === "x"
+                ? `https://x.com/intent/post?text=${encodeURIComponent(text)}`
+                : platform === "threads"
+                  ? `https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`
+                  : "https://www.instagram.com/";
+
+        await copyShareText(text);
+        window.open(url, "_blank", "noopener,noreferrer");
+    };
+
+    const [saveMenuOpen, setSaveMenuOpen] = useState(false);
+    const [shareMenuOpen, setShareMenuOpen] = useState(false);
+
     return (
         <main>
             <header>
@@ -359,6 +484,7 @@ export default function App() {
                     ))}
                 </div>
             </header>
+
             <nav>
                 {[t.g, t.t, t.f, t.h, t.s].map((x, i) => (
                     <span key={x}>
@@ -373,6 +499,7 @@ export default function App() {
                     </span>
                 ))}
             </nav>
+
             {step === 0 ? (
                 <section className="guide">
                     <h1>{t.gt}</h1>
@@ -427,9 +554,11 @@ export default function App() {
                             </g>
                         )}
                     </svg>
+
                     <p>
                         {step === 1 ? t.th : step === 2 ? t.fh : step === 3 ? t.hh : t.sh}
                     </p>
+
                     {step === 2 && (
                         <div className="colors">
                             {(["#000000", "#2B7FFF", "#123A7A"] as Color[]).map((c) => (
@@ -443,6 +572,7 @@ export default function App() {
                             ))}
                         </div>
                     )}
+
                     {step === 3 && (
                         <div className="hat-controls">
                             <div className="hat-palette">
@@ -489,6 +619,7 @@ export default function App() {
                                     </svg>
                                 </button>
                             </div>
+
                             <div className="hat-buttons">
                                 <button aria-label={t.left} onClick={() => moveHat(-8, 0)}>
                                     <Icon>arrow_back</Icon>
@@ -527,20 +658,19 @@ export default function App() {
                             </div>
                         </div>
                     )}
-                    {step === 4 && (
-                        <div className="save">
-                            <button className="primary" onClick={saveSvg}>
-                                <Icon>download</Icon>
-                                {t.s}
-                            </button>
 
+                    {step === 4 && (
+                        <div className="final-actions">
                             <div className="save-menu">
                                 <button
-                                    className="menu-trigger"
-                                    aria-label="More save options"
-                                    onClick={() => setSaveMenuOpen((v) => !v)}
+                                    className="primary"
+                                    onClick={() => {
+                                        setSaveMenuOpen((v) => !v);
+                                        setShareMenuOpen(false);
+                                    }}
                                 >
-                                    <Icon>more_vert</Icon>
+                                    <Icon>download</Icon>
+                                    {t.s}
                                 </button>
 
                                 {saveMenuOpen && (
@@ -548,17 +678,74 @@ export default function App() {
                                         <button
                                             onClick={() => {
                                                 setSaveMenuOpen(false);
-                                                savePng();
+                                                void savePng();
                                             }}
                                         >
                                             <Icon>image</Icon>
                                             {t.png}
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setSaveMenuOpen(false);
+                                                saveSvg();
+                                            }}
+                                        >
+                                            <Icon>download</Icon>
+                                            {t.svg}
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="save-menu">
+                                <button
+                                    className="primary"
+                                    onClick={() => {
+                                        setShareMenuOpen((v) => !v);
+                                        setSaveMenuOpen(false);
+                                    }}
+                                >
+                                    <Icon>share</Icon>
+                                    {t.share}
+                                </button>
+
+                                {shareMenuOpen && (
+                                    <div className="save-dropdown">
+                                        <button
+                                            onClick={() => {
+                                                setShareMenuOpen(false);
+                                                void shareTo("x");
+                                            }}
+                                        >
+                                            <i aria-hidden="true" className="social-logo fa-brands fa-x-twitter" />
+                                            {t.x}
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setShareMenuOpen(false);
+                                                void shareTo("threads");
+                                            }}
+                                        >
+                                            <i aria-hidden="true" className="social-logo fa-brands fa-threads" />
+                                            {t.threads}
+                                        </button>
+                                        <button
+                                            onClick={() => {
+                                                setShareMenuOpen(false);
+                                                void shareTo("instagram");
+                                            }}
+                                        >
+                                            <i aria-hidden="true" className="social-logo fa-brands fa-instagram" />
+                                            {t.instagram}
                                         </button>
                                     </div>
                                 )}
                             </div>
                         </div>
                     )}
+
+                    {step === 4 && <div className="share-note">{t.shareNote}</div>}
+
                     <div className="controls">
                         <button onClick={back}>
                             <Icon>arrow_back</Icon>
@@ -584,3 +771,5 @@ export default function App() {
         </main>
     );
 }
+
+createRoot(document.getElementById("root")!).render(<App />);
