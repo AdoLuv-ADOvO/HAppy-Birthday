@@ -34,6 +34,9 @@ const L = {
         threads: "Threads",
         instagram: "Instagram",
         shareNote: "分享到各社群時，請直接發文並附上 PNG 圖片及本網站網址。",
+        shareTextLabel: "分享文字",
+        copyText: "複製文字",
+        copiedText: "已複製",
         start: "開始繪畫",
         back: "上一步",
         next: "下一步",
@@ -69,6 +72,9 @@ const L = {
         threads: "Threads",
         instagram: "Instagram",
         shareNote: "When sharing to any social platform, post directly with the PNG image and this website URL included.",
+        shareTextLabel: "Share text",
+        copyText: "Copy text",
+        copiedText: "Copied",
         start: "Start Drawing",
         back: "Back",
         next: "Next",
@@ -104,6 +110,9 @@ const L = {
         threads: "Threads",
         instagram: "Instagram",
         shareNote: "各SNSに共有する際は、PNG画像と本サイトのURLを添えたまま直接投稿してください。",
+        shareTextLabel: "共有文字",
+        copyText: "文字をコピー",
+        copiedText: "コピーしました",
         start: "描き始める",
         back: "戻る",
         next: "次へ",
@@ -421,7 +430,8 @@ export default function App() {
     };
 
     const shareUrl = window.location.href || "https://adoluv-adovo.github.io/HAppy-Birthday";
-    const shareText = "HAppy Birthday!\n#HAppyBirthday #歯ッピーバースデー\n\n" + shareUrl;
+    const shareEmoji = "🫵🖌🦷❓";
+    const shareText = `${shareEmoji} → ${shareUrl}\n#HAppyBirthday #歯ッピーバースデー`;
 
     const copyShareText = async (text: string) => {
         try {
@@ -431,6 +441,14 @@ export default function App() {
         } catch {
             // Ignore clipboard failures; the fallback share URL still works.
         }
+    };
+
+    const [shareCopied, setShareCopied] = useState(false);
+
+    const handleCopyShareText = async () => {
+        await copyShareText(shareText);
+        setShareCopied(true);
+        window.setTimeout(() => setShareCopied(false), 1800);
     };
 
     const shareTo = async (platform: "x" | "threads" | "instagram") => {
@@ -744,7 +762,28 @@ export default function App() {
                         </div>
                     )}
 
-                    {step === 4 && <div className="share-note">{t.shareNote}</div>}
+                    {step === 4 && (
+                        <>
+                            <div className="share-note">{t.shareNote}</div>
+                            <div className="share-copy-box">
+                                <label className="share-copy-label">{t.shareTextLabel}</label>
+                                <div className="share-copy-field">
+                                    <div className="share-copy-display" aria-label={shareText}>
+                                        <span className="emoji-prefix">{shareEmoji}</span>
+                                        <span className="share-copy-main">{` → ${shareUrl}\n#HAppyBirthday #歯ッピーバースデー`}</span>
+                                    </div>
+                                    <button
+                                        className="primary share-copy-btn"
+                                        onClick={() => void handleCopyShareText()}
+                                        aria-label={shareCopied ? t.copiedText : t.copyText}
+                                        title={shareCopied ? t.copiedText : t.copyText}
+                                    >
+                                        <Icon>{shareCopied ? "check" : "content_copy"}</Icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </>
+                    )}
 
                     <div className="controls">
                         <button onClick={back}>

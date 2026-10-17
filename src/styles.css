@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Noto+Sans+TC:wght@400;500;700&display=swap');
+
 * {
     box-sizing: border-box;
 }
@@ -9,7 +11,7 @@ body,
     min-height: 100%;
     background: #000;
     color: #fff;
-    font-family: Arial, "Noto Sans TC", sans-serif;
+    font-family: "Segoe UI", Arial, "Noto Sans TC", sans-serif;
 }
 
 body {
@@ -218,6 +220,70 @@ button.primary {
     font-size: 0.88rem;
     line-height: 1.6;
     text-align: center;
+}
+
+.share-copy-box {
+    width: min(680px, calc(100vw - 40px), 72vh);
+    margin: 16px auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+.share-copy-label {
+    color: #d1d5db;
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+}
+
+.share-copy-field {
+    position: relative;
+    width: 100%;
+}
+
+.share-copy-display {
+    width: 100%;
+    min-height: 64px;
+    border: 1px solid #333;
+    border-radius: 12px;
+    background: #0d0d0d;
+    color: #fff;
+    padding: 12px 52px 12px 14px;
+    font-size: 14px;
+    line-height: 1.5;
+    box-sizing: border-box;
+    white-space: pre-line;
+    word-break: break-word;
+    font-family: "Segoe UI", Arial, "Noto Sans TC", sans-serif;
+}
+
+.emoji-prefix {
+    display: inline-block;
+    font-family: "Noto Color Emoji", "Segoe UI Emoji", "Apple Color Emoji", "Twemoji Mozilla", "Segoe UI Symbol", sans-serif;
+    white-space: pre;
+    font-size: 1.15em;
+    line-height: 1.2;
+}
+
+.share-copy-main {
+    font-family: "Segoe UI", Arial, "Noto Sans TC", sans-serif;
+}
+
+.share-copy-btn {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    min-width: 36px !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
 }
 
 .colors button.sel {
