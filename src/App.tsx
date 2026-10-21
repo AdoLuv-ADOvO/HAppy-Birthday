@@ -246,8 +246,15 @@ function Icon({ children }: { children: string }) {
     return <span className="material-symbols-outlined">{children}</span>;
 }
 
+function detectLocale(): "zh" | "en" | "ja" {
+    const navLang = (navigator.language || "").toLowerCase();
+    if (navLang.startsWith("zh") || navLang.startsWith("zh-cn") || navLang.startsWith("zh-tw") || navLang.startsWith("zh-hk") || navLang.startsWith("zh-mo") || navLang.startsWith("zh-sg")) return "zh";
+    if (navLang.startsWith("ja")) return "ja";
+    return "en";
+}
+
 export default function App() {
-    const [lang, setLang] = useState<"zh" | "en" | "ja">("zh"),
+    const [lang, setLang] = useState<"zh" | "en" | "ja">(() => detectLocale()),
         [step, setStep] = useState(0),
         [tooth, setTooth] = useState(""),
         [faces, setFaces] = useState<{ d: string; c: Color }[]>([]),
