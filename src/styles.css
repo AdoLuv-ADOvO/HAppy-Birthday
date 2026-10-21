@@ -406,9 +406,35 @@ button.primary {
 
 footer {
     text-align: center;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
     color: #444;
     font-size: 11px;
-    padding: 12px;
+    line-height: 1.5;
+}
+
+footer div:first-child {
+    color: #666;
+}
+
+footer div:last-child {
+    color: #9aa1ad;
+}
+
+footer a {
+    color: #9aa1ad;
+    font-size: 11px;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+footer a:hover,
+footer a:focus-visible {
+    opacity: 0.8;
+    text-decoration: underline;
+    outline: none;
 }
 
 @media (max-width: 600px) {

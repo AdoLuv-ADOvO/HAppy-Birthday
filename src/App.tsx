@@ -841,7 +841,19 @@ export default function App() {
                     {err && <div className="error">{err}</div>}
                 </section>
             )}
-            <footer>\歯ッピーバースデー！/</footer>
+            <footer>
+                <div>\ 歯ッピーバースデー！ /</div>
+                <div>
+                    Made by <a
+                        href="https://lit.link/zh-tw/ADOvO"
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="ADOvO's profile"
+                    >
+                        ADOvO
+                    </a>
+                </div>
+            </footer>
         </main>
     );
 }
