@@ -1,6 +1,7 @@
 ﻿import React, { useRef, useState, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import canvasBgSvg from "./assets/canvas_bg.svg?raw";
+import faviconUrl from "./assets/favicon.svg";
 import "./styles.css";
 
 type P = { x: number; y: number };
@@ -525,7 +526,10 @@ export default function App() {
     return (
         <main>
             <header>
-                <button onClick={() => setStep(0)}>HAppy Birthday!</button>
+                <button className="brand-button" onClick={() => setStep(0)}>
+                    <img src={faviconUrl} alt="" className="brand-icon" />
+                    <span>HAppy Birthday!</span>
+                </button>
                 <div className="lang-switcher">
                     <button
                         className="lang-toggle"

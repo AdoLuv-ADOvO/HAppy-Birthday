@@ -33,12 +33,23 @@ header {
     padding: 0 clamp(14px, 4vw, 48px);
 }
 
-header button {
+.brand-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     border: 0;
     background: none;
     color: #fff;
     cursor: pointer;
     font-size: 16px;
+    padding: 0;
+}
+
+.brand-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    flex-shrink: 0;
 }
 
 .lang-switcher {
