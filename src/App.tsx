@@ -61,6 +61,7 @@ const L = {
         bad: "無法建立有效輪廓，請重新描繪牙齒外圍。",
         noface: "請至少畫出一筆表情，再進入下一步。",
         saved: "已儲存作品！",
+        restart: "重新開始",
     },
     en: {
         g: "Guide",
@@ -99,6 +100,7 @@ const L = {
         bad: "Unable to create a valid outline. Please redraw the outer edge of the tooth.",
         noface: "Please draw at least one face stroke before moving to the next step.",
         saved: "Artwork saved!",
+        restart: "Restart",
     },
     ja: {
         g: "説明",
@@ -137,6 +139,7 @@ const L = {
         bad: "有効な輪郭を作成できませんでした。歯の外側をもう一度描いてください。",
         noface: "次のステップへ進む前に、表情を1ストローク以上描いてください。",
         saved: "作品を保存しました！",
+        restart: "やり直す",
     },
 };
 
@@ -372,6 +375,25 @@ export default function App() {
                 circle: "#2B7FFF",
                 body: "#123A7A",
             });
+    };
+
+    const restart = () => {
+        setStep(0);
+        setTooth("");
+        setFaces([]);
+        setDraft([]);
+        setDrawing(false);
+        setColor("#000000");
+        setSaveMenuOpen(false);
+        setErr("");
+        setHat({
+            x: 150,
+            y: 55,
+            scale: 1,
+            rotation: 0,
+            circle: "#2B7FFF",
+            body: "#123A7A",
+        });
     };
 
     const moveHat = (x: number, y: number) =>
@@ -747,53 +769,60 @@ export default function App() {
 
                     {step === 4 && (
                         <div className="final-actions">
-                            <div className="save-menu">
-                                <button
-                                    className="primary"
-                                    onClick={() => {
-                                        setSaveMenuOpen((v) => !v);
-                                    }}
-                                >
-                                    <Icon>download</Icon>
-                                    {t.s}
-                                </button>
+                            <div className="final-actions-row">
+                                <div className="save-menu">
+                                    <button
+                                        className="primary"
+                                        onClick={() => {
+                                            setSaveMenuOpen((v) => !v);
+                                        }}
+                                    >
+                                        <Icon>download</Icon>
+                                        {t.s}
+                                    </button>
 
-                                {saveMenuOpen && (
-                                    <div className="save-dropdown">
-                                        <button
-                                            onClick={() => {
-                                                setSaveMenuOpen(false);
-                                                void savePng();
-                                            }}
-                                        >
-                                            <Icon>image</Icon>
-                                            {t.png}
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                setSaveMenuOpen(false);
-                                                saveSvg();
-                                            }}
-                                        >
-                                            <Icon>download</Icon>
-                                            {t.svg}
-                                        </button>
-                                    </div>
-                                )}
+                                    {saveMenuOpen && (
+                                        <div className="save-dropdown">
+                                            <button
+                                                onClick={() => {
+                                                    setSaveMenuOpen(false);
+                                                    void savePng();
+                                                }}
+                                            >
+                                                <Icon>image</Icon>
+                                                {t.png}
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    setSaveMenuOpen(false);
+                                                    saveSvg();
+                                                }}
+                                            >
+                                                <Icon>download</Icon>
+                                                {t.svg}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="save-menu">
+                                    <button
+                                        className="primary"
+                                        onClick={() => {
+                                            setSaveMenuOpen(false);
+                                            void shareTo("auto");
+                                        }}
+                                    >
+                                        <Icon>share</Icon>
+                                        {t.share}
+                                    </button>
+                                </div>
                             </div>
 
-                            <div className="save-menu">
-                                <button
-                                    className="primary"
-                                    onClick={() => {
-                                        setSaveMenuOpen(false);
-                                        void shareTo("auto");
-                                    }}
-                                >
-                                    <Icon>share</Icon>
-                                    {t.share}
-                                </button>
-                            </div>
+                            <button onClick={restart}>
+                                <Icon>restart_alt</Icon>
+                                {t.restart}
+                            </button>
                         </div>
                     )}
 

@@ -220,7 +220,8 @@ nav .material-symbols-outlined {
 .primary,
 .controls button,
 .save button,
-.colors button {
+.colors button,
+.final-actions > button {
     min-height: 42px;
     border: 1px solid #333;
     border-radius: 23px;
@@ -252,7 +253,8 @@ button.primary {
 .colors,
 .controls,
 .save,
-.final-actions {
+.final-actions,
+.final-actions-row {
     display: flex;
     justify-content: center;
     gap: 9px;
@@ -261,7 +263,12 @@ button.primary {
 }
 
 .final-actions {
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
+}
+
+.final-actions-row {
+    margin-top: 0;
 }
 
 .save-menu {
