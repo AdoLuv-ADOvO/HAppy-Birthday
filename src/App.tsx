@@ -247,9 +247,19 @@ function Icon({ children }: { children: string }) {
 }
 
 function detectLocale(): "zh" | "en" | "ja" {
-    const navLang = (navigator.language || "").toLowerCase();
-    if (navLang.startsWith("zh") || navLang.startsWith("zh-cn") || navLang.startsWith("zh-tw") || navLang.startsWith("zh-hk") || navLang.startsWith("zh-mo") || navLang.startsWith("zh-sg")) return "zh";
-    if (navLang.startsWith("ja")) return "ja";
+    const locales = [
+        ...(Array.isArray(navigator.languages) ? navigator.languages : []),
+        navigator.language,
+        Intl.DateTimeFormat().resolvedOptions().locale,
+    ]
+        .filter(Boolean)
+        .map((value) => value.toLowerCase().replace(/_/g, "-"));
+
+    for (const locale of locales) {
+        if (locale === "zh" || locale.startsWith("zh-")) return "zh";
+        if (locale === "ja" || locale.startsWith("ja-")) return "ja";
+    }
+
     return "en";
 }
 
@@ -261,6 +271,7 @@ export default function App() {
         [draft, setDraft] = useState<P[]>([]),
         [drawing, setDrawing] = useState(false),
         [color, setColor] = useState<Color>("#000000"),
+        [langMenuOpen, setLangMenuOpen] = useState(false),
         [hat, setHat] = useState<Hat>({
             x: 150,
             y: 55,
@@ -458,7 +469,7 @@ export default function App() {
         window.setTimeout(() => setShareCopied(false), 1800);
     };
 
-    const shareTo = async (platform: "x" | "threads" | "instagram") => {
+    const shareTo = async (platform: "auto" | "x" | "threads" | "instagram") => {
         const pngBlob = await renderPngBlob();
         const text = shareText;
         const file = pngBlob ? new File([pngBlob], "happy-birthday.png", { type: "image/png" }) : null;
@@ -469,6 +480,22 @@ export default function App() {
                   text,
               }
             : { text, url: shareUrl };
+
+        if (platform === "auto") {
+            if (navigator.share && navigator.canShare && file && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share(shareData);
+                    return;
+                } catch {
+                    // Fall through to platform fallback.
+                }
+            }
+
+            const fallbackUrl = `https://x.com/intent/post?text=${encodeURIComponent(text)}`;
+            await copyShareText(text);
+            window.open(fallbackUrl, "_blank", "noopener,noreferrer");
+            return;
+        }
 
         if (navigator.share && file && navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
@@ -491,22 +518,43 @@ export default function App() {
     };
 
     const [saveMenuOpen, setSaveMenuOpen] = useState(false);
-    const [shareMenuOpen, setShareMenuOpen] = useState(false);
+    const langLabel = lang === "zh" ? "繁體中文" : lang === "en" ? "English" : "日本語";
 
     return (
         <main>
             <header>
                 <button onClick={() => setStep(0)}>HAppy Birthday!</button>
-                <div>
-                    {(["zh", "en", "ja"] as const).map((x) => (
-                        <button
-                            className={lang === x ? "active" : ""}
-                            onClick={() => setLang(x)}
-                            key={x}
-                        >
-                            {x === "zh" ? "中" : x.toUpperCase()}
-                        </button>
-                    ))}
+                <div className="lang-switcher">
+                    <button
+                        className="lang-toggle"
+                        onClick={() => setLangMenuOpen((v) => !v)}
+                        aria-label="Language menu"
+                        type="button"
+                    >
+                        <span className="lang-icon" aria-hidden="true">
+                            <Icon>language</Icon>
+                        </span>
+                        <span className="lang-label">{langLabel}</span>
+                        <span className="lang-caret" aria-hidden="true">▾</span>
+                    </button>
+
+                    {langMenuOpen && (
+                        <div className="lang-dropdown" role="menu" aria-label="Language options">
+                            {(["zh", "en", "ja"] as const).map((value) => (
+                                <button
+                                    key={value}
+                                    type="button"
+                                    className={lang === value ? "active" : ""}
+                                    onClick={() => {
+                                        setLang(value);
+                                        setLangMenuOpen(false);
+                                    }}
+                                >
+                                    {value === "zh" ? "繁體中文" : value === "en" ? "English" : "日本語"}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </header>
 
@@ -691,7 +739,6 @@ export default function App() {
                                     className="primary"
                                     onClick={() => {
                                         setSaveMenuOpen((v) => !v);
-                                        setShareMenuOpen(false);
                                     }}
                                 >
                                     <Icon>download</Icon>
@@ -726,45 +773,13 @@ export default function App() {
                                 <button
                                     className="primary"
                                     onClick={() => {
-                                        setShareMenuOpen((v) => !v);
                                         setSaveMenuOpen(false);
+                                        void shareTo("auto");
                                     }}
                                 >
                                     <Icon>share</Icon>
                                     {t.share}
                                 </button>
-
-                                {shareMenuOpen && (
-                                    <div className="save-dropdown">
-                                        <button
-                                            onClick={() => {
-                                                setShareMenuOpen(false);
-                                                void shareTo("x");
-                                            }}
-                                        >
-                                            <i aria-hidden="true" className="social-logo fa-brands fa-x-twitter" />
-                                            {t.x}
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                setShareMenuOpen(false);
-                                                void shareTo("threads");
-                                            }}
-                                        >
-                                            <i aria-hidden="true" className="social-logo fa-brands fa-threads" />
-                                            {t.threads}
-                                        </button>
-                                        <button
-                                            onClick={() => {
-                                                setShareMenuOpen(false);
-                                                void shareTo("instagram");
-                                            }}
-                                        >
-                                            <i aria-hidden="true" className="social-logo fa-brands fa-instagram" />
-                                            {t.instagram}
-                                        </button>
-                                    </div>
-                                )}
                             </div>
                         </div>
                     )}
