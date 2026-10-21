@@ -1,5 +1,6 @@
 ﻿import React, { useRef, useState, useCallback } from "react";
 import { createRoot } from "react-dom/client";
+import canvasBgSvg from "./assets/canvas_bg.svg?raw";
 import "./styles.css";
 
 type P = { x: number; y: number };
@@ -387,7 +388,8 @@ export default function App() {
         setStep(Math.max(0, step - 1));
     };
 
-    const markup = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="#000"/><path d="${tooth}" fill="#fff"/>${faces.map((x) => `<path d="${x.d}" fill="none" stroke="${x.c}" stroke-width="${BRUSH}" stroke-linecap="round" stroke-linejoin="round"/>`).join("")}<g transform="translate(${hat.x} ${hat.y}) rotate(${hat.rotation}) scale(${hat.scale})"><path d="M 0 0 L -27.57 66.52 A 72 72 0 0 0 27.57 66.52 Z" fill="${hat.body}"/><circle cx="0" cy="0" r="12" fill="${hat.circle}"/></g></svg>`;
+    const canvasBgDataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(canvasBgSvg)}`;
+    const markup = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><image href="${canvasBgDataUri}" width="300" height="300" preserveAspectRatio="xMidYMid slice"/><path d="${tooth}" fill="#fff"/>${faces.map((x) => `<path d="${x.d}" fill="none" stroke="${x.c}" stroke-width="${BRUSH}" stroke-linecap="round" stroke-linejoin="round"/>`).join("")}<g transform="translate(${hat.x} ${hat.y}) rotate(${hat.rotation}) scale(${hat.scale})"><path d="M 0 0 L -27.57 66.52 A 72 72 0 0 0 27.57 66.52 Z" fill="${hat.body}"/><circle cx="0" cy="0" r="12" fill="${hat.circle}"/></g></svg>`;
 
     const dl = (b: Blob, n: string) => {
         const a = document.createElement("a");
@@ -592,7 +594,7 @@ export default function App() {
                         onPointerUp={up}
                         onPointerCancel={up}
                     >
-                        <rect width="300" height="300" fill="#000" />
+                        <image href={canvasBgDataUri} width="300" height="300" preserveAspectRatio="xMidYMid slice" />
                         {tooth && <path d={tooth} fill="#fff" />}
                         {faces.map((x, i) => (
                             <path
