@@ -195,6 +195,16 @@ nav .material-symbols-outlined {
     padding: 20px;
 }
 
+.cover-art {
+    display: block;
+    width: min(440px, 78vw);
+    max-width: 100%;
+    margin: 0 auto 18px;
+    border-radius: 18px;
+    box-shadow: 0 18px 36px rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
 .guide h1 {
     font-size: clamp(30px, 6vw, 48px);
     margin: 0 0 18px;

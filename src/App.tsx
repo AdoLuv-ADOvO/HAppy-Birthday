@@ -1,6 +1,7 @@
 ﻿import React, { useRef, useState, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import canvasBgSvg from "./assets/canvas_bg.svg?raw";
+import coverUrl from "./assets/cover.png";
 import faviconUrl from "./assets/favicon.svg";
 import "./styles.css";
 
@@ -389,8 +390,13 @@ export default function App() {
         setStep(Math.max(0, step - 1));
     };
 
-    const canvasBgDataUri = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(canvasBgSvg)}`;
-    const markup = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><image href="${canvasBgDataUri}" width="300" height="300" preserveAspectRatio="xMidYMid slice"/><path d="${tooth}" fill="#fff"/>${faces.map((x) => `<path d="${x.d}" fill="none" stroke="${x.c}" stroke-width="${BRUSH}" stroke-linecap="round" stroke-linejoin="round"/>`).join("")}<g transform="translate(${hat.x} ${hat.y}) rotate(${hat.rotation}) scale(${hat.scale})"><path d="M 0 0 L -27.57 66.52 A 72 72 0 0 0 27.57 66.52 Z" fill="${hat.body}"/><circle cx="0" cy="0" r="12" fill="${hat.circle}"/></g></svg>`;
+    const backgroundMarkup = canvasBgSvg
+        .replace(/^[\s\S]*?<svg\b[^>]*>/i, "")
+        .replace(/<\/svg\s*>[\s\S]*$/i, "")
+        .replace(/<!--([\s\S]*?)-->/g, "")
+        .trim();
+
+    const markup = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">${backgroundMarkup}<path d="${tooth}" fill="#fff"/>${faces.map((x) => `<path d="${x.d}" fill="none" stroke="${x.c}" stroke-width="${BRUSH}" stroke-linecap="round" stroke-linejoin="round"/>`).join("")}<g transform="translate(${hat.x} ${hat.y}) rotate(${hat.rotation}) scale(${hat.scale})"><path d="M 0 0 L -27.57 66.52 A 72 72 0 0 0 27.57 66.52 Z" fill="${hat.body}"/><circle cx="0" cy="0" r="12" fill="${hat.circle}"/></g></svg>`;
 
     const dl = (b: Blob, n: string) => {
         const a = document.createElement("a");
@@ -581,6 +587,7 @@ export default function App() {
 
             {step === 0 ? (
                 <section className="guide">
+                    <img src={coverUrl} alt="HAppy Birthday cover" className="cover-art" />
                     <h1>{t.gt}</h1>
                     <p>{t.gp}</p>
                     <button className="primary" onClick={next}>
@@ -598,7 +605,7 @@ export default function App() {
                         onPointerUp={up}
                         onPointerCancel={up}
                     >
-                        <image href={canvasBgDataUri} width="300" height="300" preserveAspectRatio="xMidYMid slice" />
+                        <g dangerouslySetInnerHTML={{ __html: backgroundMarkup }} />
                         {tooth && <path d={tooth} fill="#fff" />}
                         {faces.map((x, i) => (
                             <path
