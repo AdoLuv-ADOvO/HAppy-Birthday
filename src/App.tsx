@@ -818,11 +818,6 @@ export default function App() {
                                     </button>
                                 </div>
                             </div>
-
-                            <button onClick={restart}>
-                                <Icon>restart_alt</Icon>
-                                {t.restart}
-                            </button>
                         </div>
                     )}
 
@@ -854,6 +849,12 @@ export default function App() {
                             <Icon>arrow_back</Icon>
                             {t.back}
                         </button>
+                        {step > 0 && (
+                            <button onClick={restart}>
+                                <Icon>restart_alt</Icon>
+                                {t.restart}
+                            </button>
+                        )}
                         {step < 4 && (
                             <button onClick={clear}>
                                 <Icon>delete</Icon>
